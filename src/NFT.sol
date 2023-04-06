@@ -9,30 +9,28 @@ import "./DefaultOperatorFilterer.sol";
 contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
     using Strings for uint256;
 
-    uint public constant MAX_TOKENS = 2420;
-    uint private constant TOKENS_RESERVED = 20;
-    uint public price = 1000000000000000; // 0.001
-    uint256 public constant MAX_MINT_PER_TX = 1;
-
-    bool public isSaleActive;
+    uint256 public constant maxTokens = 3000;
+    uint256 private constant tokensReserved = 20;
+    uint256 public gasTx = 1000000000000000; // 0.001 gas
+    uint256 public mintPrice = 186900000000000000000000000; // 186900000 ERC20 token
+    uint256 public constant maxMintAmount = 10;
     uint256 public totalSupply;
-    mapping(address => uint256) private mintedPerWallet;
-
-    string public baseUri;
+    string public baseUri = "ipfs://bafybeibc5jwvpzixjrafqx5jofcui26pfmaeajzdndqswcrxyhan5njvdi/";
     string public baseExtesion = ".json";
+    bool public isSaleActive;
+    
+    mapping(address => uint256) private mintedPerWallet;
 
     event NewNFTMinted(address sender, uint256 tokenId);
 
     constructor(address[] addresses) ERC721("BoN x EthDenver", "BONxETHD") {
-        baseUri = "ipfs://bafybeibc5jwvpzixjrafqx5jofcui26pfmaeajzdndqswcrxyhan5njvdi/";
-        
-        for(uint256 i = 1; i <= TOKENS_RESERVED; ++i) {
+        for(uint256 i = 1; i <= tokensReserved; ++i) {
             _safeMint(msg.sender, i);
         }
-        totalSupply = TOKENS_RESERVED;
+        totalSupply = tokensReserved;
 
-        uint length = addresses.length;
-        for (uint i; i < length; ) {
+        uint256 length = addresses.length;
+        for (uint256 i; i < length; ) {
             _safeMint(addresses[i], ++totalSupply);
             unchecked { ++i; }
         }
@@ -41,11 +39,11 @@ contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
     // Public Functions
     function mint(uint256 _numTokens) external payable {
         require(isSaleActive, "The sale is paused.");
-        require(_numTokens <= MAX_MINT_PER_TX, "You cannot mint that many in one transaction.");
-        require(mintedPerWallet[msg.sender] + _numTokens <= MAX_MINT_PER_TX, "You cannot mint that many total.");
+        require(_numTokens <= maxMintAmount, "You cannot mint that many in one transaction.");
+        require(mintedPerWallet[msg.sender] + _numTokens <= maxMintAmount, "You cannot mint that many total.");
         uint256 curTotalSupply = totalSupply;
-        require(curTotalSupply + _numTokens <= MAX_TOKENS, "Exceeds total supply.");
-        require(_numTokens * price <= msg.value, "Insufficient funds.");
+        require(curTotalSupply + _numTokens <= maxTokens, "Exceeds total supply.");
+        require(_numTokens * gasTx <= msg.value, "Insufficient funds.");
 
         for(uint256 i = 1; i <= _numTokens; ++i) {
             _safeMint(msg.sender, curTotalSupply + i);
@@ -65,8 +63,8 @@ contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
         baseUri = _baseUri;
     }
 
-    function setPrice(uint256 _price) external onlyOwner {
-        price = _price;
+    function setGasTx(uint256 _gasTx) external onlyOwner {
+        gasTx = _gasTx;
     }
 
 	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
