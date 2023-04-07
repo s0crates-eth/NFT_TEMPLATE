@@ -7,8 +7,8 @@ NOTES:
 - setUp is called again (fresh vars) after each test function
 - all tests need to be preceded by 'testXXX'
 - all expected to fail tests need to be preceded by 'testFailXXX'
-- to get more details; 'forge test --match-path test/Counter.t.sol -vvvvv'
-- for gas details; 'forge test --match-path test/Counter.t.sol --gas-report'
+- to get more details; 'forge test --match-path test/NFT.t.sol -vvvvv'
+- for gas details; 'forge test --match-path test/NFT.t.sol --gas-report'
 */
 
 
@@ -28,8 +28,23 @@ contract contractTest is Test {
         );
     }
 
-    function test_function1() public{
-        contractTested.fileFuncName();
-        assertEq(contractTested.var1(), 1);
+    function test_initialState() public{
+        assertEq(contractTested.totalSupply(), 23);
     }
+
+    function test_mintNormally() public{
+        contractTested.flipSaleState();
+        contractTested.mint(2);
+        assertEq(contractTested.totalSupply(), 25);
+    }
+
+    function testFail_mintButSaleNotActive() public{
+        contractTested.mint(2);
+    }
+    
+    function testFail_mintSurpassMax() public{
+        contractTested.flipSaleState();
+        contractTested.mint(11);
+    }
+
 }

@@ -4,7 +4,10 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "./DefaultOperatorFilterer.sol";
+//import "openzeppelin-contracts/contracts/access/Ownable.sol";
+//import "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "opensea_enforcer/DefaultOperatorFilterer.sol";
 
 contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
     using Strings for uint256;
@@ -17,14 +20,14 @@ contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
     uint256 public constant maxMintAmount = 10;
     uint256 public totalSupply;
     string public baseUri = "ipfs://bafybeihbg2zhxdfe2ovpiz5vlfps55vbkhzemuotkcaq34bfsicut6cj5e/";
-    string public baseExtesion = ".json";
+    string public baseExtension = ".json";
     bool public isSaleActive;
     
     mapping(address => uint256) private mintedPerWallet;
 
     event NewNFTMinted(address sender, uint256 tokenId);
 
-    constructor(address[] addresses) ERC721("BoN x EthDenver", "BONxETHD") {
+    constructor(address[] memory addresses) ERC721("BoN x EthDenver", "BONxETHD") {
         for(uint256 i = 1; i <= tokensReserved; ++i) {
             _safeMint(msg.sender, i);
         }
