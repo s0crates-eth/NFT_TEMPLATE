@@ -38,7 +38,6 @@ contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
     }
 
     // Public Functions
-    function mint(uint256 _numTokens) external {
     function mint(uint256 _numTokens) external payable {
         require(isSaleActive, "The sale is paused.");
         require(_numTokens <= maxMintAmount, "You cannot mint that many in one transaction.");
