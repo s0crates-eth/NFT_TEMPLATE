@@ -9,13 +9,13 @@ import "./DefaultOperatorFilterer.sol";
 contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
     using Strings for uint256;
 
+    address public erc20contract = 0xf0f9D895aCa5c8678f706FB8216fa22957685A13; // RVLT polygon token
+    uint256 public mintPrice = 186900000000000000000000000; // 186900000 ERC20 token
     uint256 public constant maxTokens = 3000;
     uint256 private constant tokensReserved = 20;
-    uint256 public gasTx = 1000000000000000; // 0.001 gas
-    uint256 public mintPrice = 186900000000000000000000000; // 186900000 ERC20 token
     uint256 public constant maxMintAmount = 10;
     uint256 public totalSupply;
-    string public baseUri = "ipfs://bafybeibc5jwvpzixjrafqx5jofcui26pfmaeajzdndqswcrxyhan5njvdi/";
+    string public baseUri = "ipfs://bafybeihbg2zhxdfe2ovpiz5vlfps55vbkhzemuotkcaq34bfsicut6cj5e/";
     string public baseExtesion = ".json";
     bool public isSaleActive;
     
@@ -37,13 +37,16 @@ contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
     }
 
     // Public Functions
-    function mint(uint256 _numTokens) external payable {
+    function mint(uint256 _numTokens) external {
         require(isSaleActive, "The sale is paused.");
         require(_numTokens <= maxMintAmount, "You cannot mint that many in one transaction.");
         require(mintedPerWallet[msg.sender] + _numTokens <= maxMintAmount, "You cannot mint that many total.");
         uint256 curTotalSupply = totalSupply;
         require(curTotalSupply + _numTokens <= maxTokens, "Exceeds total supply.");
-        require(_numTokens * gasTx <= msg.value, "Insufficient funds.");
+
+        // all users must APPROVE staking contract to use erc20 before v-this-v can work
+        bool success = IERC20(erc20contract).transferFrom(msg.sender, address(this), _amount);
+        require(success == true, "transfer failed!");
 
         for(uint256 i = 1; i <= _numTokens; ++i) {
             _safeMint(msg.sender, curTotalSupply + i);
@@ -61,10 +64,6 @@ contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
 
     function setBaseUri(string memory _baseUri) external onlyOwner {
         baseUri = _baseUri;
-    }
-
-    function setGasTx(uint256 _gasTx) external onlyOwner {
-        gasTx = _gasTx;
     }
 
 	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {

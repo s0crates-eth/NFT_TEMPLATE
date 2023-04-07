@@ -19,11 +19,17 @@ contract contractTest is Test {
     NFT public contractTested;
 
     function setUp() public{
-        contractTested = new NFT();
+        contractTested = new NFT(
+            [   
+                "0xcecd463f34f722ce687a5324b6fdd2e1c8fb4e86",
+                "0x4d28B3b1A14c90F859675e9c9bFc0852edDd1574",
+                "0xC735E150d0562eC7290C16DA74963B41525aC96E"
+            ]
+        );
     }
 
     function test_function1() public{
         contractTested.fileFuncName();
-        assertEq(contractTested.var(), 1);
+        assertEq(contractTested.var1(), 1);
     }
 }
