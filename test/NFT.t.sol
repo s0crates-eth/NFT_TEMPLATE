@@ -19,6 +19,9 @@ contract contractTest is Test {
     NFT public contractTested;
 
     function setUp() public{
+        address user = address(55);
+        vm.startPrank(user);
+        
         contractTested = new NFT(
             /*
             ["0xcecd463f34f722ce687a5324b6fdd2e1c8fb4e86",
