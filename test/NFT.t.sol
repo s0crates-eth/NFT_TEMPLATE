@@ -19,16 +19,15 @@ contract contractTest is Test {
     NFT public contractTested;
 
     function setUp() public{
-        address user = address(55);
+        address user = address(69);
         vm.startPrank(user);
         
-        contractTested = new NFT(
-            /*
-            ["0xcecd463f34f722ce687a5324b6fdd2e1c8fb4e86",
-            "0x4d28B3b1A14c90F859675e9c9bFc0852edDd1574",
-            "0xC735E150d0562eC7290C16DA74963B41525aC96E"]
-            */
-        );
+        address[] memory testAddresses = new address[](3);
+        testAddresses[0] = address(70);
+        testAddresses[1] = address(71);
+        testAddresses[2] = address(72);
+
+        contractTested = new NFT(testAddresses);
     }
 
     function test_initialState() public{

@@ -16,7 +16,7 @@ contract NFT is ERC721, Ownable{
     uint256 private constant tokensReserved = 20;
     uint256 public constant maxMintAmount = 10;
     uint256 public totalSupply;
-    string public baseUri = "ipfs://bafybeihbg2zhxdfe2ovpiz5vlfps55vbkhzemuotkcaq34bfsicut6cj5e/";
+    string public baseUri = "ipfs://bafybeihscowmgmn6evsax36ys57hreo744vj5lgie3m6yjrb2u2vjufpiq/";
     string public baseExtension = ".json";
     bool public isSaleActive;
     
@@ -24,7 +24,6 @@ contract NFT is ERC721, Ownable{
 
     event NewNFTMinted(address sender, uint256 tokenId);
 
-    /*
     constructor(address[] memory _addresses) ERC721("BoN x EthDenver", "BONxETHD") {
         for(uint256 i = 1; i <= tokensReserved; ++i) {
             _safeMint(msg.sender, i);
@@ -36,15 +35,6 @@ contract NFT is ERC721, Ownable{
             _safeMint(_addresses[i], ++totalSupply);
             unchecked { ++i; }
         }
-    }
-    */
-
-    // TEMP constructor to avoid the array issue
-    constructor() ERC721("BoN x EthDenver", "BONxETHD") {
-        for(uint256 i = 1; i <= tokensReserved; ++i) {
-            _safeMint(msg.sender, i);
-        }
-        totalSupply = tokensReserved;
     }
 
     // Public Functions
