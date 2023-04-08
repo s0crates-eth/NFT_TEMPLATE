@@ -4,12 +4,9 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-//import "openzeppelin-contracts/contracts/access/Ownable.sol";
-//import "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "opensea_enforcer/DefaultOperatorFilterer.sol";
 
-contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
+contract NFT is ERC721, Ownable{
     using Strings for uint256;
 
     address public erc20contract = 0xf0f9D895aCa5c8678f706FB8216fa22957685A13; // RVLT polygon token
@@ -27,17 +24,27 @@ contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
 
     event NewNFTMinted(address sender, uint256 tokenId);
 
-    constructor(address[] memory addresses) ERC721("BoN x EthDenver", "BONxETHD") {
+    /*
+    constructor(address[] memory _addresses) ERC721("BoN x EthDenver", "BONxETHD") {
         for(uint256 i = 1; i <= tokensReserved; ++i) {
             _safeMint(msg.sender, i);
         }
         totalSupply = tokensReserved;
 
-        uint256 length = addresses.length;
+        uint256 length = _addresses.length;
         for (uint256 i; i < length; ) {
-            _safeMint(addresses[i], ++totalSupply);
+            _safeMint(_addresses[i], ++totalSupply);
             unchecked { ++i; }
         }
+    }
+    */
+
+    // TEMP constructor to avoid the array issue
+    constructor() ERC721("BoN x EthDenver", "BONxETHD") {
+        for(uint256 i = 1; i <= tokensReserved; ++i) {
+            _safeMint(msg.sender, i);
+        }
+        totalSupply = tokensReserved;
     }
 
     // Public Functions
@@ -65,6 +72,10 @@ contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
     // Owner-only functions
     function flipSaleState() external onlyOwner {
         isSaleActive = !isSaleActive;
+    }
+
+    function setErc20Contract(address _contractAddress) external onlyOwner {
+        erc20contract = _contractAddress;
     }
 
     function setGasPrice(uint256 _price) external onlyOwner {
@@ -96,35 +107,22 @@ contract NFT is ERC721, Ownable, DefaultOperatorFilterer {
         uint256 erc20Balance = IERC20(erc20contract).balanceOf(address(this));
         uint256 gasBalance = address(this).balance;
         if(erc20Balance > 0){
-            uint256 seventy_percent = erc20Balance * 70 / 100;
-            uint256 twenty_percent = erc20Balance * 20 / 100;
-            uint256 ten_percent = erc20Balance * 10 / 100;
-            bool transferOne = IERC20(erc20contract).transfer(address_70, seventy_percent);
-            bool transferTwo = IERC20(erc20contract).transfer(address_20, twenty_percent);
-            bool transferThree = IERC20(erc20contract).transfer(address_10, ten_percent);
-            require(transferOne && transferTwo && transferThree, "transfer failed!");
+            uint256 seventy_percentA = erc20Balance * 70 / 100;
+            uint256 twenty_percentA = erc20Balance * 20 / 100;
+            uint256 ten_percentA = erc20Balance * 10 / 100;
+            bool transferAOne = IERC20(erc20contract).transfer(address_70, seventy_percentA);
+            bool transferATwo = IERC20(erc20contract).transfer(address_20, twenty_percentA);
+            bool transferAThree = IERC20(erc20contract).transfer(address_10, ten_percentA);
+            require(transferAOne && transferATwo && transferAThree, "transfer failed!");
         }
         if(gasBalance > 0){
-            uint256 seventy_percent = gasBalance * 70 / 100;
-            uint256 twenty_percent = gasBalance * 20 / 100;
-            uint256 ten_percent = gasBalance * 10 / 100;
-            ( bool transferOne, ) = payable(address_70).call{value: seventy_percent}("");
-            ( bool transferTwo, ) = payable(address_20).call{value: twenty_percent}("");
-            ( bool transferThree, ) = payable(address_10).call{value: ten_percent}("");
-            require(transferOne && transferTwo && transferThree, "Transfer failed.");
+            uint256 seventy_percentB = gasBalance * 70 / 100;
+            uint256 twenty_percentB = gasBalance * 20 / 100;
+            uint256 ten_percentB = gasBalance * 10 / 100;
+            ( bool transferBOne, ) = payable(address_70).call{value: seventy_percentB}("");
+            ( bool transferBTwo, ) = payable(address_20).call{value: twenty_percentB}("");
+            ( bool transferBThree, ) = payable(address_10).call{value: ten_percentB}("");
+            require(transferBOne && transferBTwo && transferBThree, "Transfer failed.");
         }
-    }
- 
-    // OpenSea Enforcer functions
-    function transferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator {
-        super.transferFrom(from, to, tokenId);
-    }
-
-    function safeTransferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator {
-        super.safeTransferFrom(from, to, tokenId);
-    }
-
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public override onlyAllowedOperator {
-        super.safeTransferFrom(from, to, tokenId, data);
     }
 }
