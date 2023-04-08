@@ -49,13 +49,11 @@ contract NFT is ERC721, Ownable{
         // users must APPROVE staking contract to use their erc20 before v-this-v can work
         bool success = IERC20(erc20contract).transferFrom(msg.sender, address(this), erc20Cost);
         require(success == true, "transfer failed!");
-
         for(uint256 i = 1; i <= _numTokens; ++i) {
             _safeMint(msg.sender, curTotalSupply + i);
         }
         mintedPerWallet[msg.sender] += _numTokens;
         totalSupply += _numTokens;
-
         emit NewNFTMinted(msg.sender, totalSupply);
     }
 
