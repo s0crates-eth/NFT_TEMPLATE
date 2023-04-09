@@ -6,6 +6,7 @@ pragma solidity ^0.8.9;
 >> add a second option to pay with BON
 - two buttons sidebyside (PAY WITH BON) for approvals
 - then one button below to buy with mint amount
+*/
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
