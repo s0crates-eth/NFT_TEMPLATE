@@ -91,5 +91,4 @@ contract contractTest is Test {
         assertFalse(b4Wallet72gas == AftWallet72gas);
     }
 
-
 }
