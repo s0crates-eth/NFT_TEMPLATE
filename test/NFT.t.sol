@@ -49,7 +49,7 @@ contract contractTest is Test {
         assertEq(contractTested.totalSupply(), 25);
     }
 
-    function testFail_mintingGasNotEnnough() public{
+    function testFail_mintingGasNotEnough() public{
         contractTested.flipSaleState();
         contractTested.mint{value: 1}(2);
     }

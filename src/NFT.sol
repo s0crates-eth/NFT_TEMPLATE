@@ -30,7 +30,7 @@ contract NFT is ERC721, Ownable{
 
     event NewNFTMinted(address sender, uint256 tokenId);
 
-    constructor(address[] memory _addresses) ERC721("BoN x EthDenver", "BONxETHD") {
+    constructor(address[] memory _addresses) ERC721("RVLT Comics #1", "RVLT_C1") {
         for(uint256 i = 1; i <= tokensReserved; ++i) {
             _safeMint(msg.sender, i);
         }
